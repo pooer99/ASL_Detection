@@ -35,4 +35,4 @@ while cap.isOpened():
 cap.release()
 cv2.destroyAllWindows()
 
-#31.29
+#1.7.4
