@@ -20,10 +20,11 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
 
 class Ui_MainWindow(QMainWindow):
     # 定义定时器，以及按钮状态设置
-    def __init__(self) -> None:
+    def __init__(self,mainWindow,application) -> None:
         super().__init__()
 
         '''自定义部分'''
+        self.app = application
         self.my_timer = QTimer()  # 创建定时器
         self.my_timer.timeout.connect(self.my_timer_cb)  # 创建定时器任务
 
@@ -32,6 +33,9 @@ class Ui_MainWindow(QMainWindow):
 
         '''引入yolov5训练模型'''
         self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+
+        '''加载ui'''
+        self.setupUi(mainWindow)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -64,6 +68,10 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(680, 430, 160, 60))
         self.pushButton_2.setObjectName("pushButton_2")
+
+        '''按钮监听事件'''
+        self.pushButton_2.clicked.connect(self.btn_exit)
+
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(680, 20, 160, 280))
         self.textBrowser.setObjectName("textBrowser")
@@ -98,15 +106,16 @@ class Ui_MainWindow(QMainWindow):
         else:
             self.btn_status = True
 
-        #点击按钮：暂停
+        #开启摄像头
         if self.btn_status:
             self.pushButton.setText('暂停')
             self.my_timer.start(40)  # 25fps
             self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # start camera
         else:
-        #点击按钮：开始
+        #停止
             self.pushButton.setText('开始')
-            self.label.clear()  # 清楚label内容
+            self.label.clear()  # 清除label内容
+            self.textBrowser.clear()  # 清除textBrowser内容
             self.my_timer.stop()  # 停止定时器
             self.cap.release()  # 关闭摄像头入代码片
 
@@ -121,26 +130,28 @@ class Ui_MainWindow(QMainWindow):
 
             """图像处理"""
             results = self.model(show)
-            results = np.squeeze(results.render())
 
-            """处理结果存储"""
+            detect_name = results.pandas().xyxy[0]['name'].to_numpy()
+            img = np.squeeze(results.render())
 
             """结果呈现"""
-            showImage = QImage(results.data, results.shape[1],results.shape[0],QImage.Format_RGB888)
-
+            showImage = QImage(img.data, img.shape[1],img.shape[0],QImage.Format_RGB888)
             self.label.setPixmap(QPixmap.fromImage(showImage))
+
+            self.textBrowser.setText(detect_name[0])
+
+
+    # 按键退出程序
+    def btn_exit(self):
+        sys.exit(self.app.exec_())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+
     MainWindow = QMainWindow()
-    ui = Ui_MainWindow()
-
-# 调用方法
-    ui.setupUi(MainWindow)
-    ui.btn_start()
-    ui.my_timer_cb()
-
+    ui = Ui_MainWindow(MainWindow,app)
     MainWindow.show()
+
     sys.exit(app.exec_())
 
 
