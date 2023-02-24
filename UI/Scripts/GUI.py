@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 
+import numpy as np
+import torch
 # Form implementation generated from reading ui file 'GUI.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
@@ -27,6 +29,9 @@ class Ui_MainWindow(QMainWindow):
 
         '''按钮状态控制'''
         self.btn_status = False
+
+        '''引入yolov5训练模型'''
+        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -115,11 +120,14 @@ class Ui_MainWindow(QMainWindow):
             show = cv2.cvtColor(show, cv2.COLOR_BGR2RGB)
 
             """图像处理"""
+            results = self.model(show)
+            results = np.squeeze(results.render())
 
             """处理结果存储"""
 
             """结果呈现"""
-            showImage = QImage(show.data, show.shape[1],show.shape[0],QImage.Format_RGB888)
+            showImage = QImage(results.data, results.shape[1],results.shape[0],QImage.Format_RGB888)
+
             self.label.setPixmap(QPixmap.fromImage(showImage))
 
 if __name__ == '__main__':

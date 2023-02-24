@@ -2,3 +2,5 @@
 .idea/
 
 Scripts/__pycache__/
+
+UI/Scripts/yolov5s.pt
