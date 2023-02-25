@@ -26,7 +26,7 @@ class Ui_MainWindow(QMainWindow):
         '''自定义部分'''
         self.app = application
         self.my_timer = QTimer()  # 创建定时器
-        self.my_timer.timeout.connect(self.my_timer_cb)  # 创建定时器任务
+        self.my_timer.timeout.connect(self.opencv_timer)  # 创建定时器任务
 
         '''按钮状态控制'''
         self.btn_status = False
@@ -36,6 +36,11 @@ class Ui_MainWindow(QMainWindow):
 
         '''加载ui'''
         self.setupUi(mainWindow)
+
+        '''按钮监听事件'''
+        self.pushButton.clicked.connect(self.btn_start)
+        self.pushButton_2.clicked.connect(self.btn_exit)
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -61,17 +66,9 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton.setGeometry(QtCore.QRect(680, 350, 160, 60))
         self.pushButton.setIconSize(QtCore.QSize(20, 20))
         self.pushButton.setObjectName("pushButton")
-
-        '''按钮监听事件'''
-        self.pushButton.clicked.connect(self.btn_start)
-
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(680, 430, 160, 60))
         self.pushButton_2.setObjectName("pushButton_2")
-
-        '''按钮监听事件'''
-        self.pushButton_2.clicked.connect(self.btn_exit)
-
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(680, 20, 160, 280))
         self.textBrowser.setObjectName("textBrowser")
@@ -120,7 +117,7 @@ class Ui_MainWindow(QMainWindow):
             self.cap.release()  # 关闭摄像头入代码片
 
     # 完成摄像头数据捕获和基本处理
-    def my_timer_cb(self):
+    def opencv_timer(self):
         if self.cap:
             """图像获取"""
             ret, self.image = self.cap.read()
@@ -131,15 +128,27 @@ class Ui_MainWindow(QMainWindow):
             """图像处理"""
             results = self.model(show)
 
-            detect_name = results.pandas().xyxy[0]['name'].to_numpy()
+            '''获取检测结果信息'''
+            # 渲染后的图片
             img = np.squeeze(results.render())
 
+            #检测信息
+            detect_pd = results.pandas().xyxy[0].sort_values('confidence', ascending=False)  # 按准确度降序排序
+            detect_name = detect_pd['name'].to_numpy()
+            detect_confidence = detect_pd['confidence'].to_numpy()
+
+            # 打印信息
+            info = ''
+            if len(detect_name) >= 1:
+                info = "主要检测对象：" + str(detect_name[0]) + ", 准确度：" + str(detect_confidence[0])
+
             """结果呈现"""
+            # 显示摄像头
             showImage = QImage(img.data, img.shape[1],img.shape[0],QImage.Format_RGB888)
             self.label.setPixmap(QPixmap.fromImage(showImage))
 
-            self.textBrowser.setText(detect_name[0])
-
+            # 显示检测信息
+            self.textBrowser.setText(info)
 
     # 按键退出程序
     def btn_exit(self):

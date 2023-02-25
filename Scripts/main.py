@@ -18,9 +18,12 @@ while cap.isOpened():
 
     cv2.imshow('ASL_Detection', np.squeeze(results.render()))
 
-    detect_name = results.pandas().xyxy[0]
-
-    print(detect_name['name'])
+    detect_pd = results.pandas().xyxy[0].sort_values('confidence', ascending=False)  # 按准确度降序排序
+    detect_name = detect_pd['name'].to_numpy()
+    detect_confidence = detect_pd['confidence'].to_numpy()
+    if(len(detect_name)>=1):
+        info = "主要检测对象：" + str(detect_name[0]) + ", 准确度：" + str(detect_confidence[0])
+        print(info)
 
     # 按q退出
     if cv2.waitKey(10) & 0xFF == ord('q'):
