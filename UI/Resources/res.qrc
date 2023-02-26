@@ -2,5 +2,8 @@
   <qresource prefix="icon">
     <file>icon.ico</file>
   </qresource>
-  <qresource prefix="qss"/>
+  <qresource prefix="img">
+    <file>BackImage.jpg</file>
+    <file>camera.png</file>
+  </qresource>
 </RCC>

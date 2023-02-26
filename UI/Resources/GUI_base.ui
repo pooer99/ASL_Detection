@@ -109,6 +109,16 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
+      <widget class="QTextBrowser" name="textBrowser">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>510</y>
+         <width>461</width>
+         <height>41</height>
+        </rect>
+       </property>
+      </widget>
       <widget class="QPushButton" name="pushButton">
        <property name="geometry">
         <rect>
@@ -126,19 +136,6 @@
          <width>20</width>
          <height>20</height>
         </size>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>510</y>
-         <width>451</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>检测信息</string>
        </property>
       </widget>
      </widget>
