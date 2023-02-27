@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>949</width>
-    <height>634</height>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
       <x>10</x>
       <y>10</y>
       <width>681</width>
-      <height>431</height>
+      <height>541</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -44,7 +44,7 @@
        <x>20</x>
        <y>40</y>
        <width>640</width>
-       <height>371</height>
+       <height>480</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -98,9 +98,9 @@
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>40</y>
+      <y>50</y>
       <width>231</width>
-      <height>171</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -113,7 +113,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>30</y>
+       <y>50</y>
        <width>161</width>
        <height>41</height>
       </rect>
@@ -163,7 +163,7 @@ QPushButton:pressed, QPushButton:checked {
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>100</y>
+       <y>130</y>
        <width>161</width>
        <height>41</height>
       </rect>
@@ -208,9 +208,9 @@ QPushButton:pressed, QPushButton:checked {
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>260</y>
+      <y>330</y>
       <width>231</width>
-      <height>181</height>
+      <height>221</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -223,7 +223,7 @@ QPushButton:pressed, QPushButton:checked {
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>30</y>
+       <y>60</y>
        <width>161</width>
        <height>41</height>
       </rect>
@@ -273,7 +273,7 @@ QPushButton:pressed, QPushButton:checked {
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>110</y>
+       <y>140</y>
        <width>161</width>
        <height>41</height>
       </rect>
@@ -318,7 +318,7 @@ QPushButton:pressed, QPushButton:checked {
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>450</y>
+      <y>560</y>
       <width>72</width>
       <height>41</height>
      </rect>
@@ -336,10 +336,10 @@ QPushButton:pressed, QPushButton:checked {
    <widget class="QLabel" name="detect_print_text">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>490</y>
+      <x>10</x>
+      <y>600</y>
       <width>671</width>
-      <height>91</height>
+      <height>121</height>
      </rect>
     </property>
     <property name="font">
@@ -380,7 +380,7 @@ QPushButton:pressed, QPushButton:checked {
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>220</y>
+      <y>280</y>
       <width>72</width>
       <height>41</height>
      </rect>
