@@ -273,15 +273,16 @@ class Ui_MainWindow(QWidget):
     '''选择本地图片'''
     def select_image_btn(self):
         # 关闭摄像头
-        self.is_camera_open = False
-        self.camera_btn_status = False
-        self.camera_detect_status = False
-        self.detect_print_text.clear()
-        self.start_camera_btn.setText('开启摄像头')
-        self.detect_window.clear()  # 清除检测窗口内容
-        self.detect_print_text.clear()  # 清除检测信息内容
-        self.my_timer.stop()  # 停止定时器
-        self.cap.release()  # 关闭摄像头入代码片
+        if self.is_camera_open :
+            self.is_camera_open = False
+            self.camera_btn_status = False
+            self.camera_detect_status = False
+            self.detect_print_text.clear()
+            self.start_camera_btn.setText('开启摄像头')
+            self.detect_window.clear()  # 清除检测窗口内容
+            self.detect_print_text.clear()  # 清除检测信息内容
+            self.my_timer.stop()  # 停止定时器
+            self.cap.release()  # 关闭摄像头入代码片
 
         # 选择图片
         self.is_image_open = True
