@@ -32,7 +32,10 @@ class Ui_MainWindow(QWidget):
         self.is_image_open = False  # 图片是否已经打开
 
         '''引入yolov5训练模型'''
-        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+        # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom',
+                               path='E:/Python Project/yolov5-master/runs/train/exp/weights/best.pt',
+                               force_reload=True)
 
         '''加载UI到窗口'''
         self.setupUi(mainWindow)
@@ -49,6 +52,7 @@ class Ui_MainWindow(QWidget):
         MainWindow.setStyleSheet("")
         MainWindow.setDocumentMode(False)
         MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
+        MainWindow.setFixedSize(MainWindow.width(), MainWindow.height())# 固定尺寸，禁止界面缩放
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.detect_frame = QtWidgets.QFrame(self.centralwidget)
@@ -328,7 +332,7 @@ class Ui_MainWindow(QWidget):
             self.is_camera_open = True
             self.start_camera_btn.setText('关闭摄像头')
             self.my_timer.start(40)  # 25fps
-            self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # start camera
+            self.cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)  # 开启摄像头（0：系统默认摄像头；1：外接摄像头）
         else:
             # 停止
             self.is_camera_open = False
