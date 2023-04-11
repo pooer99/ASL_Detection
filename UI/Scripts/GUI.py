@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
-
 import cv2
 import numpy as np
 import torch
+
 # Form implementation generated from reading ui file 'GUI_style2.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
@@ -13,7 +13,7 @@ import torch
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPixmap, QImage, QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QWidget
 
@@ -30,12 +30,16 @@ class Ui_MainWindow(QWidget):
         self.camera_detect_status = False # 是否开启摄像头的检测
         self.is_camera_open = False  # 摄像头是否已经开启
         self.is_image_open = False  # 图片是否已经打开
+        self.choose_camera = 0 #（0：系统默认摄像头；1：外接摄像头）
 
         '''引入yolov5训练模型'''
         # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
         self.model = torch.hub.load('ultralytics/yolov5', 'custom',
-                               path='E:/Python Project/yolov5-master/runs/train/exp/weights/best.pt',
-                               force_reload=True)
+                               path='E:/Python Project/yolov5-master/runs/train/exp/weights/best.pt')
+
+        '''设置模型参数'''
+        self.model.conf = 0.05 # 设置置信度阈值
+        self.model.max_det = 1 # 设置最大检测数量
 
         '''加载UI到窗口'''
         self.setupUi(mainWindow)
@@ -293,7 +297,10 @@ class Ui_MainWindow(QWidget):
         self.image, _ = QFileDialog.getOpenFileName(self, '打开文件', './', '图像文件(*.jpg *.png)')
 
         if self.image is not None:
-            self.detect_window.setPixmap(QPixmap(self.image))
+            # 缩放图片，自适应窗口
+            tran_image = QImage(self.image).scaled(640,480,Qt.IgnoreAspectRatio)
+            # 显示图片
+            self.detect_window.setPixmap(QPixmap.fromImage(tran_image))
 
     '''检测本地图片'''
     def delect_image_btn(self):
@@ -311,6 +318,10 @@ class Ui_MainWindow(QWidget):
                 x = img.shape[1]
                 y = img.shape[0]
                 show_image = QImage(img.data, x, y, x * 3, QImage.Format_RGB888)
+
+                # 缩放图片，自适应窗口
+                show_image = show_image.scaled(640, 480, Qt.IgnoreAspectRatio)
+                # 显示检测后的图片
                 self.detect_window.setPixmap(QPixmap.fromImage(show_image))
 
     '''检测摄像头'''
@@ -332,7 +343,7 @@ class Ui_MainWindow(QWidget):
             self.is_camera_open = True
             self.start_camera_btn.setText('关闭摄像头')
             self.my_timer.start(40)  # 25fps
-            self.cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)  # 开启摄像头（0：系统默认摄像头；1：外接摄像头）
+            self.cap = cv2.VideoCapture(self.choose_camera, cv2.CAP_DSHOW)  # 开启摄像头（0：系统默认摄像头；1：外接摄像头）
         else:
             # 停止
             self.is_camera_open = False
