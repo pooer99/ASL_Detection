@@ -4,6 +4,8 @@ import os
 from matplotlib import pyplot as plt
 import random
 
+from common_functions import read_bb, write_bb, yolo_to_cv2
+
 
 '''用于对原有的数据集进行数据增强'''
 
@@ -12,9 +14,10 @@ dataset_path = r'F:\augment_image_test\input'
 images_path = os.path.join(dataset_path, 'images')
 labels_path = os.path.join(dataset_path, 'labels')
 
+output_path = r'F:\augment_image_test\out'
 '''获取图片'''
 # 获取图片
-file_name = 'A1.png'  # 图片文件名
+file_name = 'A0.jpg'  # 图片文件名
 file_path = os.path.join(images_path, file_name)  # 图片文件路径
 
 img = cv2.imread(file_path)
@@ -55,44 +58,29 @@ def visualize(image):
     plt.waitforbuttonpress()
 
 BOX_COLOR = (255, 0, 0) # Red
-def visualize_bbox(img, bbox, color=BOX_COLOR, thickness=4, **kwargs):
+def visualize_bbox(img, bboxes, color=BOX_COLOR, thickness=1, **kwargs):
     print('变换后：')
-    print(bbox)
+    print(bboxes[0])
 
-    bbox = xyxy_to_xywh(size,bbox)
+    label_name = 'transfromed_0.txt'
+    write_bb(os.path.join(output_path, label_name), bboxes, ids)
+
+    # 将yolo格式边框坐标归一化
+    bboxes[0] = yolo_to_cv2(bboxes[0],size)
+    x_min, x_max, y_min, y_max = bboxes[0]
+
     print('xyxy转xywh后：')
-    print(bbox)
+    print(bboxes[0])
 
-    x_min, y_min, w, h = bbox
-    #x_min, x_max, y_min, y_max = int(x_min), int(x_min + w), int(y_min), int(y_min + h)
-    ax = plt.gca()
-    # 默认框的颜色是黑色，第一个参数是左上角的点坐标
-    # 第二个参数是宽，第三个参数是长
-    ax.add_patch(plt.Rectangle((x_min, y_min), w, h, color="blue", fill=False, linewidth=thickness))
-    plt.imshow(img)
-    plt.waitforbuttonpress()
+    # 绘制边框，用于检验
+    cv2.rectangle(img, (x_min, y_min), (x_max, y_max), color, thickness)
+
+    # 保存数据增强后的images和labels
+    image_name = 'transfromed_0.jpg'
+    cv2.imwrite(os.path.join(output_path,image_name),img)
+
+    cv2.destroyAllWindows()
     return img
-
-def xyxy_to_xywh(size, bbox):
-    """
-    将bbox的左上角点、右下角点坐标的格式，转换为bbox中心点 + bbox的w,h的格式，并进行归一化
-    size: [weight, height]
-    bbox: [Xmin, Ymin, Xmax, Ymax]
-    即：xyxy（左上右下） ——> xywh（中心宽高）
-    xyxy（左上右下）:左上角的xy坐标和右下角的xy坐标
-    xywh（中心宽高）:边界框中心点的xy坐标和图片的宽度和高度
-    """
-    dw = size[0]
-    dh = size[1]
-    x = (bbox[0] + bbox[2]) / 2.0
-    y = (bbox[1] + bbox[3]) / 2.0
-    w = bbox[2] - bbox[0]
-    h = bbox[3] - bbox[1]
-    x = x * dw
-    y = y * dh
-    w = w * dw
-    h = h * dh
-    return (x, y, w, h)
 
 '''定义扩充管道'''
 random.seed(42)
@@ -108,8 +96,8 @@ transformed_bboxes = transformed['bboxes']
 transformed_class_labels = transformed['class_labels']
 
 '''显示图片'''
-result = visualize_bbox(transformed_image,transformed_bboxes[0])
+result = visualize_bbox(transformed_image,transformed_bboxes)
 
-#visualize(result)
+visualize(result)
 
 
