@@ -1,3 +1,4 @@
+import os
 from os import path
 import glob
 import cv2
@@ -66,46 +67,14 @@ def yolo_to_cv2(yolo_bb, size):
 
     return [l, r, t, b]
 
+def read_images(path):
+    names = os.listdir(path)  # 获取images文件名
+    images = []  # 完整路径
 
-# some formal check
-def do_check(original_bb_list, trasformed_list):
-    # 1. check that # of BB is the same
-    # 2. check that, in order, class num is the same
+    # 生成路径
+    for i in range(len(names)):
+        images.append(os.path.join(path, names[i]))
 
-    assert len(original_bb_list) == len(
-        trasformed_list
-    ), "The two list of BB have not the same lenght"
+    return names, images
 
-    for o_bb, t_bb in zip(original_bb_list, trasformed_list):
-        assert len(o_bb) == len(t_bb), "single BB are not of the same length"
 
-        assert o_bb[4] == t_bb[4], "Class num. has changed"
-
-    # check the last one, to be used only
-    # for my use case
-    assert trasformed_list[-1][4] == 10
-
-    return
-
-# Visualize the image with all the BB on top
-def show_image_and_bbs(img, list_bb):
-    # img is jpg and list_bb in yolo format
-    n_boxes = len(list_bb)
-    dh, dw, _ = img.shape
-    new_image = img.copy()
-    
-    # iterate over all bb
-    for i, bb in enumerate(list_bb):
-        l, r, t, b = yolo_to_cv2(bb, dh, dw)
-
-        # we show only the global BB in red to avoid messing the image
-        if i == n_boxes - 1:
-            color = (255, 0, 0)  # red
-            tickness = 2
-        else:
-            color = (0, 255, 0)
-            tickness = 1
-
-        new_image = cv2.rectangle(new_image, (l, t), (r, b), color, tickness)
-
-    plt.imshow(new_image);
