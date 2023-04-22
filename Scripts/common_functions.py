@@ -1,30 +1,10 @@
 import os
-from os import path
-import glob
 import cv2
 import albumentations as A
 import matplotlib.pyplot as plt
 
-# read image yolo labels from yolo file
-# and returns in yolo format
-def read_bb(label_path):
-    with open(label_path, "r") as f:
-        data = f.readlines()
 
-    # build the bb list
-    yolo_bb_list = []
-
-    for line in data:
-        # Split string to float
-        class_num, x, y, w, h = map(float, line.split(" "))
-
-        # in the list, class_num is the last, ready for Albumentations
-        yolo_bb_list.append([x, y, w, h, int(class_num)])
-
-    return yolo_bb_list
-
-
-# write in a file the transformed bb
+'''保存label的边框坐标'''
 def write_bb(new_label_path, yolo_bb_list, ids_list):
     # a single component in yolo_bb_list is xc, yc, w, h, class_num
     # so we need to change the order in the file (where class_num is the first)
@@ -42,7 +22,7 @@ def write_bb(new_label_path, yolo_bb_list, ids_list):
     f.close()
 
 
-# convert a single bb for cv2
+'''将yolo格式坐标转换为xyxy，用于cv2绘制边框'''
 def yolo_to_cv2(yolo_bb, size):
     # yolo_bb is list o a tuple
     # with the order of field as expected from Albumentations
@@ -67,6 +47,7 @@ def yolo_to_cv2(yolo_bb, size):
 
     return [l, r, t, b]
 
+'''读取原图片路径'''
 def read_images(path):
     names = os.listdir(path)  # 获取images文件名
     images = []  # 完整路径
@@ -76,5 +57,40 @@ def read_images(path):
         images.append(os.path.join(path, names[i]))
 
     return names, images
+
+'''定义可视化函数'''
+'''显示图片'''
+def visualize(image):
+    plt.figure(figsize=(5, 5))
+    plt.axis('off')
+    plt.imshow(image)
+    plt.waitforbuttonpress()
+
+'''绘制边框'''
+def visualize_bbox(output_path, size, img, ids, bboxes, color=(255, 0, 0), thickness=1):
+    print('变换后：')
+    print(bboxes[0])
+
+    label_name = 'transfromed_0.txt'
+    write_bb(os.path.join(output_path, label_name), bboxes, ids)
+
+    # 将yolo格式边框坐标归一化
+    bboxes[0] = yolo_to_cv2(bboxes[0],size)
+    x_min, x_max, y_min, y_max = bboxes[0]
+
+    print('xyxy转xywh后：')
+    print(bboxes[0])
+
+    # 绘制边框，用于检验
+    cv2.rectangle(img, (x_min, y_min), (x_max, y_max), color, thickness)
+
+    # 保存数据增强后的images和labels
+    image_name = 'transfromed_0.jpg'
+    cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(os.path.join(output_path, image_name), img)
+
+    cv2.destroyAllWindows()
+    return img
+
 
 
