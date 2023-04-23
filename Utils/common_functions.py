@@ -1,6 +1,8 @@
 import os
+import random
+import shutil
+
 import cv2
-import albumentations as A
 import matplotlib.pyplot as plt
 
 
@@ -92,5 +94,62 @@ def visualize_bbox(output_path, size, img, ids, bboxes, color=(255, 0, 0), thick
     cv2.destroyAllWindows()
     return img
 
+'''显示图片'''
+def show_iamges_with_bboxes(image, bbox):
+    result = visualize_bbox(image, bbox)
+    visualize(result)
+
+
+'''从原数据集中随机获取images及其labels'''
+def random_files(count):
+    # 原始文件夹路径和目标文件夹路径
+    src_dir = "E:/Python Project/yolov5/data/test"
+    src_images_path = os.path.join(src_dir, 'images')
+    src_labels_path = os.path.join(src_dir, 'labels')
+
+    dst_dir = "F:/augment_image_test/input"
+    dst_images_path = os.path.join(dst_dir, 'images')
+    dst_labels_path = os.path.join(dst_dir, 'labels')
+
+    # 获取原始文件夹中的所有文件名
+    file_list = os.listdir(src_images_path)
+
+    # 随机选择200个文件名
+    selected_files = random.sample(file_list, count)
+
+    # 复制选中的文件到目标文件夹中
+    for file_name in selected_files:
+        # 图片复制
+        images_src_path = os.path.join(src_images_path, file_name)
+        images_dst_path = os.path.join(dst_images_path, file_name)
+        shutil.copy(images_src_path, images_dst_path)
+
+        # 标签复制
+        label_name = file_name[:-3] + 'txt'
+        labels_src_path = os.path.join(src_labels_path, label_name)
+        labels_dst_path = os.path.join(dst_labels_path, label_name)
+        shutil.copy(labels_src_path, labels_dst_path)
+
+'''删除测试数据'''
+def delet_images():
+    output_images_path = r'F:\augment_image_test\out\images'
+    output_labels_path = r'F:\augment_image_test\out\labels'
+
+    # 清空文件夹
+    shutil.rmtree(output_images_path)
+    os.mkdir(output_images_path)
+
+    # 重新生成文件夹
+    shutil.rmtree(output_labels_path)
+    os.mkdir(output_labels_path)
+
+    # 复制classes.txt
+    shutil.copy(r'F:\augment_image_test\input\labels\classes.txt', output_labels_path)
+
+'''随机选择一个数据增强方法'''
+def random_augment_opt(augs):
+    opt = random.choice(list(augs.keys()))
+    transform = augs[opt]
+    return transform, opt
 
 

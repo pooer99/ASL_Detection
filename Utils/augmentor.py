@@ -1,11 +1,10 @@
-import shutil
-
 import albumentations as A
 import cv2
 import os
+import shutil
 import random
 
-from common_functions import write_bb, read_images, visualize, visualize_bbox
+from common_functions import write_bb, read_images, random_files, delet_images, random_augment_opt, show_iamges_with_bboxes
 
 
 '''定义增强管道,用于对原有的数据集进行数据增强'''
@@ -114,43 +113,19 @@ def augment_images(augs):
 
     cv2.destroyAllWindows()
 
-'''随机选择一个数据增强方法'''
-def random_augment_opt(augs):
-    opt = random.choice(list(augs.keys()))
-    transform = augs[opt]
-    return transform, opt
-
-'''显示图片'''
-def show_iamges_with_bboxes(image,bbox):
-    result = visualize_bbox(image,bbox)
-    visualize(result)
-
-'''删除测试数据'''
-def delet_images():
-    output_images_path = r'F:\augment_image_test\out\images'
-    output_labels_path = r'F:\augment_image_test\out\labels'
-
-    # 清空文件夹
-    shutil.rmtree(output_images_path)
-    os.mkdir(output_images_path)
-
-    # 重新生成文件夹
-    shutil.rmtree(output_labels_path)
-    os.mkdir(output_labels_path)
-
-    # 复制classes.txt
-    shutil.copy(r'F:\augment_image_test\input\labels\classes.txt', output_labels_path)
-
 if __name__ == '__main__':
 
-    # 清空输出文件夹
-    #delet_images()
+    #清空输出文件夹
+    delet_images()
+
+    # 从原数据集随机挑选图片，到目标目录
+    #random_files(50)
 
     # 获取增强管道
-    augmentors = make_augmentor()
-
+    # augmentors = make_augmentor()
+    #
     # 进行图片增强
-    augment_images(augmentors)
+    # augment_images(augmentors)
 
 
 
