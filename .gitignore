@@ -1,6 +1,6 @@
 
 .idea/
 
-Scripts/__pycache__/
+Utils/__pycache__/
 
-UI/Scripts/yolov5s.pt
+GUI/Scripts/yolov5s.pt

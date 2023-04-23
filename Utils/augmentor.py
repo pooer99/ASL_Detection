@@ -15,7 +15,12 @@ def make_augmentor():
     bbox_param = A.BboxParams(format='yolo', label_fields=['class_labels'])
     random.seed(42)
 
-    # 以下是各种图像处理的增强管道的定义：
+    ''' 以下是各种图像处理的增强管道的定义：
+        增强方法 opt :
+            HorizontalFlip : 水平翻转
+            Blur           : 模糊
+            RandomScale    : 随机缩放
+    '''
     augmentor = {
 
         # 水平翻转
@@ -39,7 +44,7 @@ def make_augmentor():
 
 
 '''获取图片'''
-def augment_images(transform, opt):
+def augment_images(augs):
 
     # 文件根目录
     dataset_path = r'F:\augment_image_test\input'
@@ -87,6 +92,8 @@ def augment_images(transform, opt):
         print(bbox)
 
         '''开始数据增强'''
+        transform, opt = random_augment_opt(augs)  # 随机选择增强方式
+
         transformed = transform(image=img, bboxes=bbox, class_labels=ids)
         transformed_image = transformed['image']
         transformed_bboxes = transformed['bboxes']
@@ -107,6 +114,11 @@ def augment_images(transform, opt):
 
     cv2.destroyAllWindows()
 
+'''随机选择一个数据增强方法'''
+def random_augment_opt(augs):
+    opt = random.choice(list(augs.keys()))
+    transform = augs[opt]
+    return transform, opt
 
 '''显示图片'''
 def show_iamges_with_bboxes(image,bbox):
@@ -138,15 +150,8 @@ if __name__ == '__main__':
     augmentors = make_augmentor()
 
     # 进行图片增强
-    '''
-    增强方法 opt :
-        HorizontalFlip : 水平翻转
-        Blur           : 模糊
-        RandomScale    : 随机缩放
-    '''
+    augment_images(augmentors)
 
-    opt = 'RandomScale' # 选择增强的方法
-    augment_images(augmentors[opt], opt)
 
 
 
