@@ -149,6 +149,9 @@ def delet_images():
 '''随机选择一个数据增强方法'''
 def random_augment_opt(augs):
     opt = random.choice(list(augs.keys()))
+
+    #opt = 'MotionBlur'  # 测试
+
     transform = augs[opt]
     return transform, opt
 
