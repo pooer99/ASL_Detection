@@ -196,14 +196,14 @@ def augment_images(augs):
 if __name__ == '__main__':
 
     #清空输出文件夹
-    delet_images()
+    #delet_images()
 
     # 从原数据集随机挑选图片，到目标目录
-    #random_files(20)
+    #random_files(100)
 
     # 获取增强管道
     augmentors = make_augmentor()
-    #
+
     # 进行图片增强
     augment_images(augmentors)
 

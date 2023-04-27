@@ -35,7 +35,7 @@ class Ui_MainWindow(QWidget):
         '''引入yolov5训练模型'''
         # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
         self.model = torch.hub.load('ultralytics/yolov5', 'custom',
-                               path='../../Model/exp2_yolov5m_100_best.pt')
+                               path='../../Model/exp6_yolov5m_100_best.pt')
 
         '''设置模型参数'''
         # self.model.conf = 0.05 # 设置置信度阈值

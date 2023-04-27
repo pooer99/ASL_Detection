@@ -103,7 +103,7 @@ def show_iamges_with_bboxes(image, bbox):
 '''从原数据集中随机获取images及其labels'''
 def random_files(count):
     # 原始文件夹路径和目标文件夹路径
-    src_dir = "E:/Python Project/yolov5/data/test"
+    src_dir = "E:/Python Project/yolov5/data/train"
     src_images_path = os.path.join(src_dir, 'images')
     src_labels_path = os.path.join(src_dir, 'labels')
 
