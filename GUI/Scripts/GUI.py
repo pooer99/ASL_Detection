@@ -35,15 +35,11 @@ class Ui_MainWindow(QWidget):
         '''引入yolov5训练模型'''
         # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
         self.model = torch.hub.load('ultralytics/yolov5', 'custom',
-                               path='../../Model/exp6_yolov5m_100_best.pt')
+                               path='../../Model/Yolov5m_SE.pt')
 
         '''设置模型参数'''
         # self.model.conf = 0.05 # 设置置信度阈值
         # self.model.max_det = 1 # 设置最大检测数量
-
-        a_to_k = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        l_to_u = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-        v_to_z = [21, 22, 23, 24, 25]
         # self.model.classes = v_to_z  # 设置需要检测的类别
 
         '''加载UI到窗口'''

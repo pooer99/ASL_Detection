@@ -4,7 +4,7 @@ import os
 import shutil
 import random
 
-from common_functions import write_bb, read_images, random_files, delet_images, random_augment_opt, show_iamges_with_bboxes
+from common_functions import write_bb, read_images, random_files, delet_images, random_augment_opt, show_iamges_with_bboxes,random_files_move
 
 
 '''定义增强管道,用于对原有的数据集进行数据增强'''
@@ -18,6 +18,7 @@ def make_augmentor():
             HorizontalFlip : 水平翻转
             Blur           : 模糊
             RandomScale    : 随机缩放
+            ...
     '''
     augmentor = {
         # 以下为像素级：
@@ -185,8 +186,10 @@ def augment_images(augs):
         # 保存图片，标签
         transformed_image = cv2.cvtColor(transformed_image,cv2.COLOR_BGR2RGB)
 
-        files_name[i] = opt + '_' + files_name[i]
-        file_label_name = opt + '_' + file_label_name
+        # files_name[i] = opt + '_' + files_name[i]
+        # file_label_name = opt + '_' + file_label_name
+        files_name[i] = files_name[i]
+        file_label_name = file_label_name
 
         cv2.imwrite(os.path.join(output_images_path, files_name[i]), transformed_image)
         write_bb(os.path.join(output_labels_path, file_label_name), transformed_bboxes, ids)
@@ -199,13 +202,13 @@ if __name__ == '__main__':
     #delet_images()
 
     # 从原数据集随机挑选图片，到目标目录
-    #random_files(100)
+    random_files(500)
 
     # 获取增强管道
-    augmentors = make_augmentor()
+    #augmentors = make_augmentor()
 
     # 进行图片增强
-    augment_images(augmentors)
+    #augment_images(augmentors)
 
 
 
