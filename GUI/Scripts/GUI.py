@@ -24,6 +24,7 @@ class Ui_MainWindow(QWidget):
 
         '''初始化参数'''
         self.app = application
+        self.FPS = 30  # 设置帧数
         self.my_timer = QTimer()  # 创建定时器
         self.my_timer.timeout.connect(self.opencv_timer)  # 创建定时器任务
         self.camera_btn_status = False  # 按钮状态
@@ -35,7 +36,7 @@ class Ui_MainWindow(QWidget):
         '''引入yolov5训练模型'''
         # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
         self.model = torch.hub.load('ultralytics/yolov5', 'custom',
-                               path='../../Model/Yolov5m_SE.pt')
+                               path='../../Model/Yolov5m_Aug.pt')
 
         '''设置模型参数'''
         # self.model.conf = 0.05 # 设置置信度阈值
@@ -274,7 +275,7 @@ class Ui_MainWindow(QWidget):
         info = '检测对象数量：' + str(len(detect_name)) + '\n'
         if len(detect_name) >= 1:
             for i in range(len(detect_name)):
-                info = info + "检测对象：" + str(detect_name[i]) + ", 准确度：" + str(detect_confidence[i]) + '\n'
+                info = info + "检测对象：" + str(detect_name[i]) + ", 置信度：" + str(detect_confidence[i]) + '\n'
 
         # 显示检测信息
         self.detect_print_text.setText(info)
@@ -343,7 +344,7 @@ class Ui_MainWindow(QWidget):
 
             self.is_camera_open = True
             self.start_camera_btn.setText('关闭摄像头')
-            self.my_timer.start(40)  # 25fps
+            self.my_timer.start(int(1000/self.FPS))  # 25fps
             self.cap = cv2.VideoCapture(self.choose_camera, cv2.CAP_DSHOW)  # 开启摄像头（0：系统默认摄像头；1：外接摄像头）
         else:
             # 停止
@@ -353,7 +354,7 @@ class Ui_MainWindow(QWidget):
             self.detect_print_text.clear()  # 清除检测信息内容
             self.my_timer.stop()  # 停止定时器
             self.camera_detect_status = False
-            self.cap.release()  # 关闭摄像头入代码片
+            self.cap.release()  # 释放视频流资源
 
         # 完成摄像头数据捕获和基本处理
 
@@ -383,7 +384,7 @@ class Ui_MainWindow(QWidget):
                 results = self.model(show)
 
                 '''获取检测结果信息'''
-                # 渲染后的图片
+                # 渲染后的图片 squeeze:去除图像数组中的单维度条目,不加会卡死
                 img = np.squeeze(results.render())
 
                 # 打印信息

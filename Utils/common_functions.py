@@ -8,16 +8,13 @@ import matplotlib.pyplot as plt
 
 '''保存label的边框坐标'''
 def write_bb(new_label_path, yolo_bb_list, ids_list):
-    # a single component in yolo_bb_list is xc, yc, w, h, class_num
-    # so we need to change the order in the file (where class_num is the first)
+
     with open(new_label_path, "w") as f:
         for i in range(len(yolo_bb_list)):
-            # get a row
 
             xc, yc, w, h = yolo_bb_list[i]
             class_num = ids_list[i]
 
-            # of decimal digits: 8
             new_line = f"{class_num} {xc:.8f} {yc:.8f} {w:.8f} {h:.8f}\n"
 
             f.write(new_line)
@@ -26,25 +23,18 @@ def write_bb(new_label_path, yolo_bb_list, ids_list):
 
 '''将yolo格式坐标转换为xyxy，用于cv2绘制边框'''
 def yolo_to_cv2(yolo_bb, size):
-    # yolo_bb is list o a tuple
-    # with the order of field as expected from Albumentations
-    # class_num is the last one
-    # width, height are the width, height of the entire image
-    # w, h are for the BB
+
     height = size[0]
     width = size[1]
 
-    # the last is the class_num, here not used
     x, y, w, h = yolo_bb
 
-    # x lower left. max to restrict if outside
-    # if < 0 then 0
     l = max(0, int((x - w / 2.0) * width))
-    # x upper right
+
     r = min(int((x + w / 2.0) * width), width - 1)
-    # y lower left
+
     t = max(0, int((y - h / 2.0) * height))
-    # y upper right
+
     b = min(int((y + h / 2.0) * height), height - 1)
 
     return [l, r, t, b]

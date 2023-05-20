@@ -123,7 +123,7 @@ def make_augmentor():
     return augmentor
 
 
-'''获取图片'''
+'''增强图片'''
 def augment_images(augs):
 
     # 文件根目录
@@ -163,7 +163,7 @@ def augment_images(augs):
             ids.append(data[0])
             # 获取边框坐标
             data.remove(data[0])
-            bbox.append(list(map(float,data)))
+            bbox.append(list(map(float, data)))
 
         f.close()
 
